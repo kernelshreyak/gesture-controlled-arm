@@ -1,49 +1,33 @@
 import os
 import time
 
+# Reduce noisy logs from OpenCV/TF/MediaPipe and fix Qt font warnings if possible.
+if os.path.isdir("/usr/share/fonts"):
+    os.environ.setdefault("QT_QPA_FONTDIR", "/usr/share/fonts")
+os.environ.setdefault("OPENCV_LOG_LEVEL", "ERROR")
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
+os.environ.setdefault("GLOG_minloglevel", "2")
+
 import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-MODEL_PATH = "models/hand_landmarker.task"
-
-HAND_CONNECTIONS = [
-    (0, 1),
-    (1, 2),
-    (2, 3),
-    (3, 4),  # thumb
-    (0, 5),
-    (5, 6),
-    (6, 7),
-    (7, 8),  # index
-    (0, 9),
-    (9, 10),
-    (10, 11),
-    (11, 12),  # middle
-    (0, 13),
-    (13, 14),
-    (14, 15),
-    (15, 16),  # ring
-    (0, 17),
-    (17, 18),
-    (18, 19),
-    (19, 20),  # pinky
-]
+from src.config import load_config
+from src.visualization import draw_hand_skeleton
 
 
-def draw_hand_skeleton(image, landmarks, line_color=(66, 230, 245), point_color=(245, 117, 66), radius=2):
-    height, width = image.shape[:2]
-    points = []
-    for landmark in landmarks:
-        x_px = int(landmark.x * width)
-        y_px = int(landmark.y * height)
-        points.append((x_px, y_px))
-        cv2.circle(image, (x_px, y_px), radius, point_color, -1)
+cfg = load_config()
+camera = cfg["camera"]
+model = cfg["model"]
+window = cfg["window"]
+tracker_cfg = cfg["tracker"]
 
-    for start_idx, end_idx in HAND_CONNECTIONS:
-        cv2.line(image, points[start_idx], points[end_idx], line_color, 2)
-
+MODEL_PATH = model["hand_landmarker"]
+WINDOW_NAME = window["name"]
+CAMERA_DEVICE = camera["device"]
+FRAME_WIDTH = camera["width"]
+FRAME_HEIGHT = camera["height"]
 
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(
@@ -55,40 +39,54 @@ base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
 options = vision.HandLandmarkerOptions(
     base_options=base_options,
     running_mode=vision.RunningMode.VIDEO,
-    num_hands=2,
-    min_hand_detection_confidence=0.5,
-    min_hand_presence_confidence=0.5,
-    min_tracking_confidence=0.5,
+    num_hands=tracker_cfg["max_hands"],
+    min_hand_detection_confidence=tracker_cfg["min_detection_confidence"],
+    min_hand_presence_confidence=tracker_cfg["min_presence_confidence"],
+    min_tracking_confidence=tracker_cfg["min_tracking_confidence"],
 )
 
 # Use the 'with' statement for proper resource management
-cap = cv2.VideoCapture(0)  # 0 refers to the default webcam
+cap = cv2.VideoCapture(CAMERA_DEVICE, cv2.CAP_V4L2)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
 start_time = time.time()
 
-with vision.HandLandmarker.create_from_options(options) as landmarker:
-    while cap.isOpened():
-        success, frame = cap.read()
-        if not success:
-            print("Ignoring empty camera frame.")
-            continue
+cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
+cv2.resizeWindow(WINDOW_NAME, FRAME_WIDTH, FRAME_HEIGHT)
 
-        # Recolor image from BGR to RGB for MediaPipe processing
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+try:
+    if not cap.isOpened():
+        raise RuntimeError(f"Could not open camera device {CAMERA_DEVICE}")
+    with vision.HandLandmarker.create_from_options(options) as landmarker:
+        while cap.isOpened():
+            success, frame = cap.read()
+            if not success:
+                print("Ignoring empty camera frame.")
+                time.sleep(0.01)
+                continue
 
-        timestamp_ms = int((time.time() - start_time) * 1000)
-        results = landmarker.detect_for_video(mp_image, timestamp_ms)
+            # Recolor image from BGR to RGB for MediaPipe processing
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
 
-        if results.hand_landmarks:
-            for hand_landmarks in results.hand_landmarks:
-                draw_hand_skeleton(frame, hand_landmarks)
+            timestamp_ms = int((time.time() - start_time) * 1000)
+            results = landmarker.detect_for_video(mp_image, timestamp_ms)
 
-        # Display the feed
-        cv2.imshow("MediaPipe Hand Detection (HandLandmarker)", frame)
+            if results.hand_landmarks:
+                for hand_landmarks in results.hand_landmarks:
+                    draw_hand_skeleton(frame, hand_landmarks)
 
-        # Break the loop when 'q' is pressed
-        if cv2.waitKey(10) & 0xFF == ord("q"):
-            break
+            # Display the feed
+            cv2.imshow(WINDOW_NAME, frame)
 
-cap.release()
-cv2.destroyAllWindows()
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
+            try:
+                if cv2.getWindowProperty(WINDOW_NAME, cv2.WND_PROP_VISIBLE) < 1:
+                    break
+            except cv2.error:
+                break
+finally:
+    cap.release()
+    cv2.destroyAllWindows()

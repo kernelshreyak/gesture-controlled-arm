@@ -1,46 +1,103 @@
 # Gesture-Controlled Bionic Arm
 
-A repository for building a real-time, camera-driven bionic arm system. The goal is to simulate a functional bionic arm in **Webots** first, then move to a physical build later. Control is driven by **MediaPipe** hand pose detection from live video input, with emphasis on **precise finger motion** and intuitive mapping from human hand gestures to a robotic arm.
+This repository is for building a camera-driven bionic arm system controlled by real-time hand tracking. The input side stays consistent across implementations: camera frames are processed with MediaPipe, landmarks are extracted, and those landmarks are mapped into a simulator or robot representation.
 
-## Vision
-- Real-time hand pose tracking from a camera feed
-- High-fidelity finger motion capture and mapping
-- Simulated bionic arm in Webots (initial milestone)
-- Path to a physical bionic arm prototype
-- Optional expansion to ROS 2 + Gazebo for broader robotics workflows
+The current repository has two active directions:
+- a Python hand-tracking and simulation pipeline
+- a Webots project for the bionic arm model and world
 
-## Planned Stack
-- **Hand pose detection**: MediaPipe
-- **Simulation**: Webots (initially)
-- **Robotics middleware (later)**: ROS 2
-- **Advanced simulation (later)**: Gazebo
-- **3D models**: Existing CAD assets or basic custom models for learning
+Future simulator backends such as MuJoCo and Genesis will be added later, but they will reuse the same tracker stage: camera input followed by MediaPipe hand landmark detection.
 
-## High-Level Architecture (planned)
-1. **Camera Input**: Real-time video capture
-2. **Hand Pose Inference**: MediaPipe hand landmark detection
-3. **Gesture/Hand Mapping**: Convert landmarks to arm & finger joint targets
-4. **Simulation/Control**: Drive Webots arm model with joint targets
-5. **Physical Prototype**: Replace simulation backend with real actuators
+## Core Flow
+
+1. Capture video from the configured camera device.
+2. Run MediaPipe HandLandmarker on each frame.
+3. Convert landmarks into joint or pose targets.
+4. Drive a simulator or robot model from those targets.
+
+## Main Scripts
+
+- `run_pipeline.py`
+  Main Python entry point for the current working pipeline. It reads `config.yaml`, runs the hand tracker, maps landmarks into joint targets, and drives the simplified PyBullet hand.
+
+- `hand_pose_detection_test.py`
+  Standalone tracker visualization script. Use this to verify camera input, MediaPipe detection, and on-screen hand skeleton rendering before debugging simulator behavior.
+
+## Python Modules
+
+- `src/hand_tracker.py`
+  MediaPipe hand tracking wrapper. Handles camera capture and returns 2D and world landmarks.
+
+- `src/mapping.py`
+  Landmark conversion and finger curl mapping logic used by the simulation pipeline.
+
+- `src/sim_pybullet.py`
+  Simplified CPU-friendly hand simulation backend built on PyBullet.
+
+- `src/visualization.py`
+  Shared drawing helpers for rendering the hand skeleton on video frames.
+
+- `src/config.py`
+  YAML config loader used by the scripts.
+
+## Webots Project
+
+The Webots project lives under `bionic_arm_webots/`.
+
+- `bionic_arm_webots/worlds/bionic_arm.wbt`
+  Main Webots world for the arm model.
+
+- `bionic_arm_webots/CAD/simplified_bionic_arm.FCStd`
+  CAD source for the simplified arm model.
+
+The Webots side is currently separate from the Python simulation pipeline. It is the main place for arm/world modeling and scene iteration.
+
+## Configuration
+
+All runtime configuration is in `config.yaml`.
+
+Important values include:
+- camera device path
+- frame size
+- MediaPipe model path
+- tracker confidence thresholds
+- simulation timing and motor settings
+- landmark-to-simulation scaling
+
+Default camera device:
+- `/dev/video2`
 
 ## Models
-- MediaPipe Tasks models live in `models/`
-- See `models/README.md` for required files and placement
 
-## Milestones (tentative)
-1. Setup MediaPipe hand tracking with stable landmark output
-2. Build or import a simple arm + hand model in Webots
-3. Map finger landmarks to simulated joint angles
-4. Add calibration layer for scale and hand size
-5. Prototype a full arm motion mapping (wrist + elbow + shoulder)
-6. Explore ROS 2 and Gazebo integration
-7. Begin hardware planning for a physical model
+MediaPipe task models live in `models/`.
 
-## Repo Status
-This repo is an early-stage scaffold. Expect rapid iteration and structural changes as the simulation and mapping pipeline solidify.
+- `models/hand_landmarker.task`
+  Required for the current tracker and pipeline scripts.
 
-## Contributing
-Contributions and ideas are welcome. If you want to help, open an issue with your proposal or start a draft PR.
+See [models/README.md](/home/shreyak/programming/gesture-controlled-arm/models/README.md) for model placement notes.
 
-## License
-TBD
+## Setup
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the main pipeline:
+
+```bash
+python run_pipeline.py
+```
+
+Run the tracker-only test window:
+
+```bash
+python hand_pose_detection_test.py
+```
+
+## Notes
+
+- The Python pipeline currently uses PyBullet because it is lightweight and easy to iterate on from Python.
+- MuJoCo and Genesis-based implementations can be added later without changing the tracker stage.
+- The repository is still evolving, so interfaces and file layout may continue to shift as the simulator backends mature.

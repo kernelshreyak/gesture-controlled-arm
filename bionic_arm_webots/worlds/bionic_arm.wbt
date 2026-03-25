@@ -1,0 +1,478 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/kuka/youbot/protos/KukaBox.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.08210611853063195 -0.9533341002520999 0.29053860087147304 6.122051701107812
+  position -0.46720383667061327 -0.03095568252876807 0.20948616541784607
+}
+TexturedBackground {
+}
+Robot {
+  translation 0 0 0.01
+  children [
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor 0 0 0.118
+      }
+      device [
+        RotationalMotor {
+          name "palm_motor"
+          maxVelocity 150
+        }
+      ]
+      endPoint Solid {
+        translation 0 -1.22338e-07 0.15
+        rotation 1 0 0 0
+        children [
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              anchor 0 -0.005 0.03
+            }
+            device [
+              RotationalMotor {
+                name "indexfinger_motor0"
+                maxVelocity 150
+              }
+            ]
+            endPoint Solid {
+              translation -0.025 -0.005 0.06
+              rotation 1 0 0 0
+              children [
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                  }
+                  device [
+                    RotationalMotor {
+                      name "indexfinger_motor1"
+                      maxVelocity 150
+                    }
+                  ]
+                  endPoint Solid {
+                    translation 0 0.005 0.008
+                    rotation 1 0 0 0
+                    children [
+                      HingeJoint {
+                        jointParameters HingeJointParameters {
+                        }
+                        device [
+                          RotationalMotor {
+                            name "indexfinger_motor2"
+                            maxVelocity 150
+                          }
+                        ]
+                        endPoint Solid {
+                          translation 0 0 0.014
+                          rotation 1 0 0 0
+                          children [
+                            DEF indexfinger_section3_shape Shape {
+                              geometry Box {
+                                size 0.01 0.01 0.012
+                              }
+                            }
+                          ]
+                          name "indexfinger_section3"
+                          boundingObject USE indexfinger_section3_shape
+                        }
+                      }
+                      DEF indexfinger_section2_shape Shape {
+                        appearance DEF hand_material Appearance {
+                          material Material {
+                            diffuseColor 0.721569 0.0156863 0.0156863
+                          }
+                        }
+                        geometry Box {
+                          size 0.01 0.01 0.015
+                        }
+                      }
+                    ]
+                    name "indexfinger_section2"
+                    boundingObject USE indexfinger_section2_shape
+                  }
+                }
+                Solid {
+                  translation 0 0.005 -0.015
+                  children [
+                    DEF indexfinger_section1_shape Shape {
+                      appearance USE hand_material
+                      geometry DEF indexfinger_section1_shape Box {
+                        size 0.01 0.01 0.03
+                      }
+                    }
+                  ]
+                  name "indexfinger_section1"
+                  boundingObject USE indexfinger_section1_shape
+                }
+              ]
+              name "index_finger"
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              anchor 0 0 0.03
+            }
+            device [
+              RotationalMotor {
+                name "middlefinger_motor0"
+                maxVelocity 150
+              }
+            ]
+            endPoint Solid {
+              translation -0.009 -0.005 0.06
+              rotation 1 0 0 0
+              children [
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                  }
+                  device [
+                    RotationalMotor {
+                      name "middlefinger_motor1"
+                      maxVelocity 150
+                    }
+                  ]
+                  endPoint Solid {
+                    translation 0 0.005 0.008
+                    rotation 1 0 0 0
+                    children [
+                      HingeJoint {
+                        jointParameters HingeJointParameters {
+                        }
+                        device [
+                          RotationalMotor {
+                            name "middlefinger_motor2"
+                            maxVelocity 150
+                          }
+                        ]
+                        endPoint Solid {
+                          translation 0 0.0002 0.014
+                          rotation 1 0 0 0
+                          children [
+                            DEF middlefinger_section3_shape Shape {
+                              appearance USE hand_material
+                              geometry Box {
+                                size 0.01 0.01 0.012
+                              }
+                            }
+                          ]
+                          name "middlefinger_section3"
+                          boundingObject USE middlefinger_section3_shape
+                        }
+                      }
+                      DEF middlefinger_section2_shape Shape {
+                        appearance USE hand_material
+                        geometry Box {
+                          size 0.01 0.01 0.015
+                        }
+                      }
+                    ]
+                    name "middlefinger_section2"
+                    boundingObject USE middlefinger_section2_shape
+                  }
+                }
+                Solid {
+                  translation 0 0.005 -0.015
+                  children [
+                    DEF middlefinger_section1_shape Shape {
+                      appearance USE hand_material
+                      geometry Box {
+                        size 0.01 0.01 0.03
+                      }
+                    }
+                  ]
+                  name "middlefinger_section1"
+                  boundingObject USE middlefinger_section1_shape
+                }
+              ]
+              name "middle_finger"
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              anchor 0 0.005 0.03
+            }
+            device [
+              RotationalMotor {
+                name "ringfinger_motor0"
+                maxVelocity 150
+              }
+            ]
+            endPoint Solid {
+              translation 0.008 -0.005 0.061
+              rotation 1 0 0 0
+              children [
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                  }
+                  device [
+                    RotationalMotor {
+                      name "ringfinger_motor1"
+                      maxVelocity 150
+                    }
+                  ]
+                  endPoint Solid {
+                    translation 0 0.005 0.008
+                    rotation 1 0 0 0
+                    children [
+                      HingeJoint {
+                        jointParameters HingeJointParameters {
+                        }
+                        device [
+                          RotationalMotor {
+                            name "ringfinger_motor2"
+                            maxVelocity 150
+                          }
+                        ]
+                        endPoint Solid {
+                          translation 0 0.0003 0.014
+                          rotation 1 0 0 0
+                          children [
+                            DEF ringfinger_section3_shape Shape {
+                              appearance USE hand_material
+                              geometry Box {
+                                size 0.01 0.01 0.012
+                              }
+                            }
+                          ]
+                          name "ringfinger_section3"
+                          boundingObject USE ringfinger_section3_shape
+                        }
+                      }
+                      DEF ringfinger_section2_shape Shape {
+                        appearance USE hand_material
+                        geometry Box {
+                          size 0.01 0.01 0.015
+                        }
+                      }
+                    ]
+                    name "ringfinger_section2"
+                    boundingObject USE ringfinger_section2_shape
+                  }
+                }
+                Solid {
+                  translation 0 0.005 -0.015
+                  children [
+                    DEF ringfinger_section1_shape Shape {
+                      appearance USE hand_material
+                      geometry Box {
+                        size 0.01 0.01 0.03
+                      }
+                    }
+                  ]
+                  name "ringfinger_section1"
+                  boundingObject USE ringfinger_section1_shape
+                }
+              ]
+              name "ring_finger"
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              anchor 0 0.01 0.03
+            }
+            device [
+              RotationalMotor {
+                name "pinkyfinger_motor0"
+                maxVelocity 150
+              }
+            ]
+            endPoint Solid {
+              translation 0.024 -0.006 0.06
+              rotation 1 0 0 0
+              children [
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                  }
+                  device [
+                    RotationalMotor {
+                      name "pinkyfinger_motor1"
+                      maxVelocity 150
+                    }
+                  ]
+                  endPoint Solid {
+                    translation 0 0.005 0.008
+                    rotation 1 0 0 0
+                    children [
+                      HingeJoint {
+                        jointParameters HingeJointParameters {
+                        }
+                        device [
+                          RotationalMotor {
+                            name "pinkyfinger_motor2"
+                            maxVelocity 150
+                          }
+                        ]
+                        endPoint Solid {
+                          translation 0 0.0005 0.014
+                          rotation 1 0 0 0
+                          children [
+                            DEF pinkyfinger_section3_shape Shape {
+                              appearance USE hand_material
+                              geometry Box {
+                                size 0.01 0.01 0.012
+                              }
+                            }
+                          ]
+                          name "pinkyfinger_section3"
+                          boundingObject USE pinkyfinger_section3_shape
+                        }
+                      }
+                      DEF pinkyfinger_section2_shape Shape {
+                        appearance USE hand_material
+                        geometry Box {
+                          size 0.01 0.01 0.015
+                        }
+                      }
+                    ]
+                    name "pinkyfinger_section2"
+                    boundingObject USE pinkyfinger_section2_shape
+                  }
+                }
+                Solid {
+                  translation 0 0.005 -0.015
+                  children [
+                    DEF pinkyfinger_section1_shape Shape {
+                      appearance USE hand_material
+                      geometry Box {
+                        size 0.01 0.01 0.03
+                      }
+                    }
+                  ]
+                  name "pinkyfinger_section1"
+                  boundingObject USE pinkyfinger_section1_shape
+                }
+              ]
+              name "pinky_finger"
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              anchor 0 -0.015 0.015
+            }
+            device [
+              RotationalMotor {
+                name "thumb_motor0"
+                maxVelocity 150
+              }
+            ]
+            endPoint Solid {
+              translation -0.052 -0.008 -0.02
+              rotation 0 1 0 1.5708
+              children [
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                  }
+                  device [
+                    RotationalMotor {
+                      name "thumb_motor1"
+                      maxVelocity 150
+                    }
+                  ]
+                  endPoint Solid {
+                    translation 0 0.005 0.008
+                    rotation 1 0 0 0
+                    children [
+                      HingeJoint {
+                        jointParameters HingeJointParameters {
+                        }
+                        device [
+                          RotationalMotor {
+                            name "thumb_motor2"
+                            maxVelocity 150
+                          }
+                        ]
+                        endPoint Solid {
+                          translation 0 0.0025 0.008
+                          rotation 1 0 0 0
+                          children [
+                            DEF thumb_section3_shape Shape {
+                              appearance USE hand_material
+                              geometry Box {
+                                size 0.01 0.01 0.012
+                              }
+                            }
+                          ]
+                          name "thumb_section3"
+                          boundingObject USE thumb_section3_shape
+                        }
+                      }
+                      DEF thumb_section2_shape Shape {
+                        appearance USE hand_material
+                        geometry Box {
+                          size 0.01 0.01 0.015
+                        }
+                      }
+                    ]
+                    name "thumb_section2"
+                    boundingObject USE thumb_section2_shape
+                  }
+                }
+                Solid {
+                  translation 0 0.005 -0.015
+                  children [
+                    DEF thumb_section1_shape Shape {
+                      appearance USE hand_material
+                      geometry Box {
+                        size 0.01 0.01 0.03
+                      }
+                    }
+                  ]
+                  name "thumb_section1"
+                  boundingObject USE thumb_section1_shape
+                }
+              ]
+              name "thumb"
+            }
+          }
+          DEF palm_shape Shape {
+            appearance DEF hand_material Appearance {
+              material DEF hand_material Material {
+                diffuseColor 0.721569 0.0156863 0.0156863
+              }
+            }
+            geometry Box {
+              size 0.06 0.01 0.06
+            }
+          }
+        ]
+        name "palm"
+        boundingObject USE palm_shape
+      }
+    }
+    Solid {
+      translation 0 0 0.05
+      children [
+        DEF arm_shape Shape {
+          appearance DEF hand_material Appearance {
+            material Material {
+              diffuseColor 0.721569 0.0156863 0.0156863
+            }
+          }
+          geometry Capsule {
+            height 0.1
+            radius 0.02
+          }
+        }
+      ]
+      name "arm"
+      boundingObject USE arm_shape
+      physics Physics {
+      }
+    }
+  ]
+  name "bionic_arm"
+  controller "hand_controller_manual"
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 0.0246197 -0.00712936 0
+}
+KukaBox {
+  translation -0.025 -0.0644939 0.06
+  size 0.025 0.025 0.12
+}
