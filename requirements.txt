@@ -1,4 +1,3 @@
-mediapipe
-opencv-python
-pybullet
-PyYAML
+# Camera-side Python environment (ros2_ws/.venv); ROS packages come from /opt/ros.
+mediapipe==0.10.35
+numpy

@@ -1,15 +1,10 @@
-# MediaPipe Models
+# MediaPipe model
 
-This project uses MediaPipe Tasks models in `.task` format.
+The camera node needs the MediaPipe HandLandmarker model at `models/hand_landmarker.task`. It is ignored by Git. Download it with:
 
-## Required Model
-Place the HandLandmarker model at:
+```bash
+curl -fL -o models/hand_landmarker.task \
+  https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
+```
 
-- `models/hand_landmarker.task`
-
-## Where to Get It
-Download the HandLandmarker model from the official MediaPipe Models page and save it with the exact filename above.
-
-## Notes
-- The script `hand_pose_detection_test.py` expects the model at the path above.
-- If you want a lighter model, you can use a lite hand landmarker model and update `MODEL_PATH` in `hand_pose_detection_test.py` accordingly.
+`run_live.sh` passes this path to the ROS launch automatically.

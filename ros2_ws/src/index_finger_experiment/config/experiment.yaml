@@ -1,0 +1,5 @@
+five_finger_retarget_node:
+  ros__parameters:
+    filter_alpha: 0.5
+    landmark_timeout: 0.5
+    arm_filter_alpha: 0.15   # Lower is smoother and slower arm motion.

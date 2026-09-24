@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <world name="finger_world">
+    <gravity>0 0 -9.8</gravity>
+    <physics name="step" type="ignored"><max_step_size>0.001</max_step_size><real_time_factor>1</real_time_factor></physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+    <scene>
+      <ambient>0.45 0.45 0.48 1</ambient><background>0.78 0.83 0.9 1</background>
+      <shadows>true</shadows><grid>false</grid>
+    </scene>
+
+    <!-- Key light from above and in front casts shadows; the fill and rim
+         lights keep the far side of the arm and the fingers readable. -->
+    <light type="directional" name="key_light">
+      <cast_shadows>true</cast_shadows>
+      <pose>2 -2 4 0 0 0</pose>
+      <diffuse>0.95 0.93 0.88 1</diffuse><specular>0.4 0.4 0.4 1</specular>
+      <direction>-0.5 0.4 -0.8</direction>
+    </light>
+    <light type="directional" name="fill_light">
+      <cast_shadows>false</cast_shadows>
+      <pose>-2 2 3 0 0 0</pose>
+      <diffuse>0.45 0.48 0.55 1</diffuse><specular>0.05 0.05 0.05 1</specular>
+      <direction>0.6 -0.5 -0.5</direction>
+    </light>
+    <light type="point" name="rim_light">
+      <cast_shadows>false</cast_shadows>
+      <pose>-0.6 -0.2 1.2 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse><specular>0.2 0.2 0.2 1</specular>
+      <attenuation><range>4</range><constant>0.4</constant><linear>0.3</linear><quadratic>0.05</quadratic></attenuation>
+    </light>
+    <gui fullscreen="0">
+      <plugin filename="MinimalScene" name="3D View">
+        <gz-gui><property type="string" key="state">docked</property></gz-gui>
+        <engine>ogre2</engine><scene>scene</scene>
+        <camera_pose>1.12 -0.2 0.66 0 0.04 2.86</camera_pose>
+      </plugin>
+      <plugin filename="GzSceneManager" name="Scene Manager"/>
+      <plugin filename="WorldControl" name="World control"/>
+    </gui>
+
+    <model name="ground">
+      <static>true</static>
+      <link name="floor">
+        <collision name="floor_collision"><geometry><plane><normal>0 0 1</normal><size>4 4</size></plane></geometry></collision>
+        <visual name="floor_visual">
+          <geometry><plane><normal>0 0 1</normal><size>4 4</size></plane></geometry>
+          <material><ambient>0.55 0.56 0.58 1</ambient><diffuse>0.62 0.63 0.65 1</diffuse><specular>0.1 0.1 0.1 1</specular></material>
+        </visual>
+      </link>
+    </model>
+
+    <include><uri>model://panda_five</uri></include>
+
+    <!-- A small table in front of the robot. Lower your hand in the camera to
+         bring the palm down over the cube, close your fist, then raise it. -->
+    <model name="table">
+      <static>true</static>
+      <pose>0.72 0 0.05 0 0 0</pose>
+      <link name="top">
+        <collision name="collision"><geometry><box><size>0.3 0.4 0.1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.3 0.4 0.1</size></box></geometry>
+          <material><ambient>0.35 0.25 0.18 1</ambient><diffuse>0.5 0.36 0.25 1</diffuse><specular>0.1 0.1 0.1 1</specular></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="cube">
+      <pose>0.71 0.01 0.12 0 0 0</pose>
+      <link name="link">
+        <inertial>
+          <mass>0.05</mass>
+          <inertia><ixx>1.7e-5</ixx><iyy>1.7e-5</iyy><izz>1.7e-5</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia>
+        </inertial>
+        <collision name="collision">
+          <geometry><box><size>0.04 0.04 0.04</size></box></geometry>
+          <surface>
+            <friction><ode><mu>1.5</mu><mu2>1.5</mu2></ode><bullet><friction>1.5</friction><friction2>1.5</friction2></bullet></friction>
+            <contact><ode><min_depth>0.001</min_depth></ode></contact>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.04 0.04 0.04</size></box></geometry>
+          <material><ambient>0.7 0.12 0.1 1</ambient><diffuse>0.85 0.15 0.12 1</diffuse><specular>0.3 0.3 0.3 1</specular></material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>
